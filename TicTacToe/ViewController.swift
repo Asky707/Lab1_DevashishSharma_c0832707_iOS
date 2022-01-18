@@ -38,7 +38,7 @@ class ViewController: UIViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
-                                                //SWIPE GESTURE
+                                                //SWIPE UP GESTURE 
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(swipeGesture))
         swipe.direction = .up
         self.view.addGestureRecognizer(swipe)
@@ -46,7 +46,7 @@ class ViewController: UIViewController
         initBoard()
     }
     
-    @objc func swipeGesture(){              //Swipe Gesture
+    @objc func swipeGesture(){              //Swipe Gesture Call
         resetBoard()
     }
     
