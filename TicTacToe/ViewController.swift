@@ -35,16 +35,50 @@ class ViewController: UIViewController
     var noughtsScore = 0
     var crossesScore = 0
     
+    var tapButton: UIButton!
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
-                                                //SWIPE UP GESTURE 
+                                                //SWIPE  UP  GESTURE
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(swipeGesture))
         swipe.direction = .up
         self.view.addGestureRecognizer(swipe)
         
         initBoard()
+        becomeFirstResponder()                  //Making the viewcontroller as 1st Responder
     }
+    
+    override var canBecomeFirstResponder: Bool{
+        return true
+        //Making the viewcontroller if it can become the 1st responder
+    }
+    
+    override func motionBegan(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        
+        //SHAKE MOTION BEGAN
+    
+    }
+    
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        
+        //SHAKE MOTION ENDED
+        
+        if(motion == .motionShake && currentTurn == Turn.Circle){
+            tapButton.setTitle(nil, for: .normal)
+            tapButton.isEnabled = true
+            currentTurn = Turn.Cross
+            turnLabel.text = CROSS
+        }
+        else if(motion == .motionShake && currentTurn == Turn.Cross){
+            tapButton.setTitle(nil, for: .normal)
+            tapButton.isEnabled = true
+            currentTurn = Turn.Circle
+            turnLabel.text = CIRCLE
+        }
+        
+    }
+    
     
     @objc func swipeGesture(){              //Swipe Gesture Call
         resetBoard()
@@ -128,6 +162,9 @@ class ViewController: UIViewController
         return false
     }
     
+    
+    
+    
     func thisSymbol(_ button: UIButton, _ symbol: String) -> Bool
     {
         return button.title(for: .normal) == symbol
@@ -181,6 +218,7 @@ class ViewController: UIViewController
     {
         if(sender.title(for: .normal) == nil)
         {
+            tapButton = sender
             if(currentTurn == Turn.Circle)
             {
                 sender.setTitle(CIRCLE, for: .normal)
