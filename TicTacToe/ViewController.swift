@@ -4,7 +4,7 @@
 //
 //  Created by Devashish Sharma on 18/1/22.
 //
-
+import CoreData
 import UIKit
 
 class ViewController: UIViewController
@@ -37,15 +37,20 @@ class ViewController: UIViewController
     
     var tapButton: UIButton!
     
+    var tbdata: Ttbdata!
+    
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
-                                                //SWIPE  UP  GESTURE
+                            //SWIPE  UP  GESTURE
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(swipeGesture))
         swipe.direction = .up
         self.view.addGestureRecognizer(swipe)
         
         initBoard()
+        loadTbdata()
         becomeFirstResponder()                  //Making the viewcontroller as 1st Responder
     }
     
@@ -172,6 +177,23 @@ class ViewController: UIViewController
     
     func resultAlert(title: String)
     {
+        if tbdata != nil{
+            tbdata.circle = Int16(noughtsScore)
+            tbdata.cross = Int16(crossesScore)
+        }
+        else
+        {
+            tbdata = Ttbdata(context: context)
+            tbdata.circle = Int16(noughtsScore)
+            tbdata.cross = Int16(crossesScore)
+        }
+        do{
+            try context.save()
+        }
+        catch{
+            print("error",error.localizedDescription)
+        }
+        
         let message = "\nCircles " + String(noughtsScore) + "\n\nCrosses " + String(crossesScore)
         let ac = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
         ac.addAction(UIAlertAction(title: "Reset", style: .default, handler: { (_) in
@@ -234,6 +256,22 @@ class ViewController: UIViewController
             sender.isEnabled = false
         }
     }
+    
+    func loadTbdata() {
+            let request: NSFetchRequest<Ttbdata> = Ttbdata.fetchRequest()
+            
+            do {
+                let tbdata_list = try context.fetch(request)
+                
+                if tbdata_list.count > 0{
+                tbdata = tbdata_list.first
+                crossesScore = Int(tbdata.cross)
+                noughtsScore = Int(tbdata.circle)
+                }
+            } catch {
+                print("Error loading folders \(error.localizedDescription)")
+            }
+        }
     
 }
 
